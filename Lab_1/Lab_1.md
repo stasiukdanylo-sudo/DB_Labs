@@ -119,8 +119,7 @@ II. ER-діаграма
     Rental — Track (Many-to-Many): Оренда складається з багатьох треків, трек може бути в багатьох орендах.
 
 Діаграма
-
-<img width="3776" height="4548" alt="изображение" src="https://github.com/user-attachments/assets/e2829c26-d815-4c48-bf27-18382b237131" />
+<img width="3776" height="4548" alt="изображение" src="https://github.com/user-attachments/assets/a8d2ed2e-133a-4894-940b-367566416c5d" />
 
 Висновок
 
