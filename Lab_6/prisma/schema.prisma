@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model album {
+  album_id     Int     @id @default(autoincrement())
+  title        String  @db.VarChar(255)
+  release_year Int?
+  artist_id    Int
+  artist       artist  @relation(fields: [artist_id], references: [artist_id], onDelete: Cascade, onUpdate: NoAction)
+  track        track[]
+}
+
+model artist {
+  artist_id Int     @id @default(autoincrement())
+  name      String  @db.VarChar(255)
+  country   String? @db.VarChar(100)
+  album     album[]
+}
+
+model customer {
+  customer_id Int      @id @default(autoincrement())
+  full_name   String   @db.VarChar(255)
+  email       String   @unique @db.VarChar(150)
+  rental      rental[]
+}
+
+model genre {
+  genre_id Int     @id @default(autoincrement())
+  name     String  @unique @db.VarChar(100)
+  track    track[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model rental {
+  rental_id   Int           @id @default(autoincrement())
+  start_date  DateTime?     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  end_date    DateTime      @db.Date
+  customer_id Int
+  customer    customer      @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  rental_item rental_item[]
+}
+
+model rental_item {
+  rental_id Int
+  track_id  Int
+  rental    rental @relation(fields: [rental_id], references: [rental_id], onDelete: Cascade, onUpdate: NoAction)
+  track     track  @relation(fields: [track_id], references: [track_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([rental_id, track_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model track {
+  track_id     Int           @id @default(autoincrement())
+  title        String
+  duration     Float
+  daily_rate   Decimal       @db.Decimal(10, 2)
+  album_id     Int?
+  genre_id     Int?
+  rental_item  rental_item[]
+  album        album?        @relation(fields: [album_id], references: [album_id], onUpdate: NoAction)
+  genre        genre?        @relation(fields: [genre_id], references: [genre_id], onUpdate: NoAction)
+  reviews      review[]
+}
+
+model review {
+  id        Int      @id @default(autoincrement())
+  rating    Int      @default(5)
+  comment   String?
+  track     track    @relation(fields: [trackId], references: [track_id])
+  trackId   Int
+}
